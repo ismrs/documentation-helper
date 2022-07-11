@@ -12,7 +12,11 @@ DocumentationHelper.prototype = {
 initialize: function() {
 },
 
-// Function - Get all Application files 
+/**
+ * Get all Application files 
+ * @param {string} applicationID 
+ * @returns Array of JSON Objects (sys_name', 'sys_class_name', 'sys_update_name')
+ */
 getAllApplicationFiles: function (applicationID) {
 this.logDebug('getAllApplicationFiles', 'input::', applicationID);
 
@@ -27,8 +31,21 @@ return applicationFiles;
 // Function - Create Knowledge Article
 
 
-// Function - Select Template
-
+// Function - Select Template --> TODO --> 
+selectTemplate: function (table) {
+switch(table) {
+    case 'sys_script_include':
+        // add template fields
+        //'<h2>'+ +'</h2>'
+        break;
+    case y:
+        // code block
+        break;
+    default:
+        // code block
+    }
+    
+},
 
 // Function - Build payload
 
@@ -37,7 +54,6 @@ return applicationFiles;
 logDebug: function (origin, message, value){
 
 var debug = gs.getProperty('documentation.debugging');
-gs.info('documentation.debugging::' + debug);
 
 if (debug == 'true'){
 gs.info('[['+ origin + ']]:: ' + message + ' :: ' + value);
@@ -53,13 +69,13 @@ type: 'DocumentationHelper'
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-11 18:54:51</sys_created_on>
         <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
-        <sys_mod_count>25</sys_mod_count>
+        <sys_mod_count>28</sys_mod_count>
         <sys_name>DocumentationHelper</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-11 20:43:34</sys_updated_on>
+        <sys_updated_on>2022-07-11 21:05:41</sys_updated_on>
     </sys_script_include>
 </record_update>
