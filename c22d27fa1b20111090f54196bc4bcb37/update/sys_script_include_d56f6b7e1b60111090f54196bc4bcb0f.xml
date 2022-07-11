@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>global.DocumentationHelper</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>DocumentationHelper</name>
+        <script><![CDATA[var DocumentationHelper = Class.create();
+DocumentationHelper.prototype = {
+initialize: function() {
+},
+
+// Function - Get all Application files 
+getAllApplicationFiles: function (applicationID) {
+this.logDebug('getAllApplicationFiles', 'input::', applicationID);
+
+var applicationFiles = new global.GlideQuery('sys_metadata')
+.where('sys_scope', applicationID)
+.select('sys_name', 'sys_class_name', 'sys_update_name')
+.toArray(100); // <-- TODO:: reavaluate this, could be more files.
+
+return applicationFiles;
+},
+
+// Function - Create Knowledge Article
+
+
+// Function - Select Template
+
+
+// Function - Build payload
+
+
+// Function -  Debug
+logDebug: function (origin, message, value){
+
+var debug = gs.getProperty('documentation.debugging');
+gs.info('documentation.debugging::' + debug);
+
+if (debug == 'true'){
+gs.info('[['+ origin + ']]:: ' + message + ' :: ' + value);
+
+}else { 
+return;
+}
+},
+
+type: 'DocumentationHelper'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-07-11 18:54:51</sys_created_on>
+        <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
+        <sys_mod_count>25</sys_mod_count>
+        <sys_name>DocumentationHelper</sys_name>
+        <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
+        <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-07-11 20:43:34</sys_updated_on>
+    </sys_script_include>
+</record_update>
