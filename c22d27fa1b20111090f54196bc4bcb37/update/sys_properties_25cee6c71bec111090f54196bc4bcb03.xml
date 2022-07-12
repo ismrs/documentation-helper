@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>Knowledge base to generate documentation articles within.</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>documentation.knowledgebase</name>
+        <read_roles/>
+        <suffix/>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-07-12 08:51:25</sys_created_on>
+        <sys_id>25cee6c71bec111090f54196bc4bcb03</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>documentation.knowledgebase</sys_name>
+        <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
+        <sys_update_name>sys_properties_25cee6c71bec111090f54196bc4bcb03</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-07-12 08:52:25</sys_updated_on>
+        <type>string</type>
+        <value>c0feaac71bec111090f54196bc4bcb54</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=25cee6c71bec111090f54196bc4bcb03"/>
+</record_update>

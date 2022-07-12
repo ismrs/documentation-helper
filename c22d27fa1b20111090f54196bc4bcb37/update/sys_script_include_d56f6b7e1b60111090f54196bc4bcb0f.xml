@@ -14,7 +14,7 @@ initialize: function() {
 
 /**
  * Get all Application files 
- * @param {string} applicationID 
+ * @param {String} applicationID 
  * @returns Array of JSON Objects (sys_name', 'sys_class_name', 'sys_update_name')
  */
 getAllApplicationFiles: function (applicationID) {
@@ -25,29 +25,83 @@ var applicationFiles = new global.GlideQuery('sys_metadata')
 .select('sys_name', 'sys_class_name', 'sys_update_name')
 .toArray(100); // <-- TODO:: reavaluate this, could be more files.
 
+this.logDebug('getAllApplicationFiles', 'output::', applicationFiles);
 return applicationFiles;
 },
 
-// Function - Create Knowledge Article
+/**
+ * Create Knowledge Article
+ * @param {String} data 
+ */
+createKbArticle: function (data){
+var article = new global.GlideQuery('kb_knowledge')
+.insert({
+    short_description: 'Docuemntation', // <-- TODO: The name should reflect whats being documented.
+    kb_knowledge_base: gs.getProperty('documentation.knowledgebase'),
+    text: data})
+.get();
+
+this.logDebug('createKbArticle', 'created record::', JSON.stringify(article, null, 2));
+},
 
 
 // Function - Select Template --> TODO --> 
-selectTemplate: function (table) {
-switch(table) {
-    case 'sys_script_include':
-        // add template fields
-        //'<h2>'+ +'</h2>'
-        break;
-    case y:
-        // code block
-        break;
-    default:
-        // code block
-    }
-    
+getTemplate: function (glideRecord) {
+   
+var payload = '';
+switch(glideRecord.sys_class_name.toString()) {
+case 'sys_script_include':
+
+payload = '<h2>' +  glideRecord.name + 
+'</h2> </n>' +
+glideRecord.description + 
+'</n> </n>' + 
+'Active: ' + glideRecord.active + 
+'</n>'+'API name: ' + glideRecord.api_name + 
+'</n>'+'Caller access: ' + glideRecord.caller_access + 
+'</n></n></n>' +
+'<h3> Versions </h3> </n>';
+
+//+ getVersions(glideRecord.sys_id);
+
+this.logDebug('getTemplate', 'Script Include Payload::', payload);
+
+
+break;
+// case 'sys_properties':
+
+// // code block
+// break;
+// case a:
+// // code block
+// break;
+
+// case b:
+// // code block
+// break;
+// case c:
+// // code block
+// break;
+// case d:
+// // code block
+// break;
+// case e:
+// // code block
+// break;
+default:
+// code block
+}
+
 },
 
+// Function - Get Versions
+getVersions: function(grSysID){
+
+},
+
+
 // Function - Build payload
+
 
 
 // Function -  Debug
@@ -69,13 +123,13 @@ type: 'DocumentationHelper'
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-11 18:54:51</sys_created_on>
         <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
-        <sys_mod_count>28</sys_mod_count>
+        <sys_mod_count>58</sys_mod_count>
         <sys_name>DocumentationHelper</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-11 21:05:41</sys_updated_on>
+        <sys_updated_on>2022-07-12 21:11:22</sys_updated_on>
     </sys_script_include>
 </record_update>
