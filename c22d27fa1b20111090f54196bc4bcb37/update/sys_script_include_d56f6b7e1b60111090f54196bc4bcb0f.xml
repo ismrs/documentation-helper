@@ -5,7 +5,7 @@
         <api_name>global.DocumentationHelper</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
-        <description/>
+        <description>Helper functions for Documentation generation.</description>
         <name>DocumentationHelper</name>
         <script><![CDATA[var DocumentationHelper = Class.create();
 DocumentationHelper.prototype = {
@@ -36,9 +36,9 @@ return applicationFiles;
 createKbArticle: function (data){
 var article = new global.GlideQuery('kb_knowledge')
 .insert({
-    short_description: 'Docuemntation', // <-- TODO: The name should reflect whats being documented.
-    kb_knowledge_base: gs.getProperty('documentation.knowledgebase'),
-    text: data})
+short_description: 'Docuemntation', // <-- TODO: The name should reflect whats being documented.
+kb_knowledge_base: gs.getProperty('documentation.knowledgebase'),
+text: data})
 .get();
 
 this.logDebug('createKbArticle', 'created record::', JSON.stringify(article, null, 2));
@@ -47,34 +47,57 @@ this.logDebug('createKbArticle', 'created record::', JSON.stringify(article, nul
 
 // Function - Select Template --> TODO --> 
 getTemplate: function (glideRecord) {
-   
+
 var payload = '';
 switch(glideRecord.sys_class_name.toString()) {
+
 case 'sys_script_include':
+    payload = '<div><h2>'+ glideRecord.name + '</h2>' +
+    '<p>'+ glideRecord.description + '</p>' + 
+    '<p> Active: ' + glideRecord.active + '</p>'+
+    '<p>'+'API name: ' + glideRecord.api_name + '</p>'+ 
+    '<p>'+'Caller access: ' + glideRecord.caller_access + '</p>'+
+    '<h3> Versions </h3>' +
+    this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+    '</div>';
+    
+    this.logDebug('getTemplate', 'Script Include Payload::', payload);
+    
+    break;
 
-payload = '<h2>' +  glideRecord.name + 
-'</h2> </n>' +
-glideRecord.description + 
-'</n> </n>' + 
-'Active: ' + glideRecord.active + 
-'</n>'+'API name: ' + glideRecord.api_name + 
-'</n>'+'Caller access: ' + glideRecord.caller_access + 
-'</n></n></n>' +
-'<h3> Versions </h3> </n>';
+case 'sys_script':
+    payload = '<div><h2>'+ glideRecord.name + '</h2>' + 
+    '<p>' + glideRecord.description + '</p>' +
+    '<p> Active: ' + glideRecord.active + '</p>'+
+    '<p> Abort action: ' + glideRecord.abort_action + '</p>' +
+    '<p> Access: ' + glideRecord.access + '</p>' +
+    '<p>' + glideRecord.action_delete + '</p>' +
+    '<p>' + glideRecord.action_insert + '</p>' +
+    '<p>' + glideRecord.action_query + '</p>' +
+    '<p>' + glideRecord.action_update + '</p>' +
+    '<p>' + glideRecord.add_message + '</p>' +
+    '<p>' + glideRecord.change_fields + '</p>' + //<-- TODO: Do think this relates to related fields, do check!
+    '<p>' + glideRecord.client_callable + '</p>' +
+    '<p>' + glideRecord.collection + '</p>' +
+    '<p>' + glideRecord.condition + '</p>' +
+    '<p>' + glideRecord.execute_function + '</p>' +
+    '<p>' + glideRecord.filter_condition + '</p>' +
+    '<p>' + glideRecord.is_rest + '</p>' +
+    '<p>' + glideRecord.message + '</p>' +
+    '<p>' + glideRecord.order + '</p>' +
+    '<p>' + glideRecord.priority + '</p>' +
+    '<p>' + glideRecord.role_conditions + '</p>' +
+    '<h3> Versions </h3>' +
+    this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+    '</div>';
+    
+    this.logDebug('getTemplate', 'Business Rule Payload::', payload);
+    
+    break;
 
-//+ getVersions(glideRecord.sys_id);
-
-this.logDebug('getTemplate', 'Script Include Payload::', payload);
-
-
+case 'sys_properties':
+// // code block
 break;
-// case 'sys_properties':
-
-// // code block
-// break;
-// case a:
-// // code block
-// break;
 
 // case b:
 // // code block
@@ -92,12 +115,53 @@ default:
 // code block
 }
 
+return payload;
+
 },
 
 // Function - Get Versions
-getVersions: function(grSysID){
+getVersions: function(sys_update_name){
 
+var versions = new global.GlideQuery('sys_update_version')
+.where('name', sys_update_name)
+.orderByDesc('sys_created_on')
+.select('name', 'source$DISPLAY', 'sys_created_on')
+.toArray(5)
+
+this.logDebug('getVersions', 'output::', JSON.stringify(versions, null, 2));
+return versions;
 },
+
+
+/**
+ * buildHTMLTable
+ * @param {Array} versionArray 
+ * @returns String
+ */
+buildHTMLTable: function (versionArray) {
+this.logDebug('buildHTMLTable', 'input::', JSON.stringify(versionArray, null, 2));
+
+var tablePayload = '<table>'+
+'<tr>'+
+'<th>Name</th>'+
+'<th>Source</th>'+
+'<th>Created</th>'+
+'</tr>';
+
+for (var i = 0; i < versionArray.length; i++) {
+var tableRow = '<tr><td>' + versionArray[i].name +
+'  </td><td>'+ 
+versionArray[i].source$DISPLAY +
+'  </td><td>' + versionArray[i].sys_created_on +
+'</tr>';
+tablePayload = tablePayload + tableRow;
+}
+tablePayload = tablePayload + '</table>';
+
+this.logDebug('buildHTMLTable', 'output::', tablePayload);
+return tablePayload;
+},
+
 
 
 // Function - Build payload
@@ -123,13 +187,13 @@ type: 'DocumentationHelper'
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-11 18:54:51</sys_created_on>
         <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
-        <sys_mod_count>58</sys_mod_count>
+        <sys_mod_count>96</sys_mod_count>
         <sys_name>DocumentationHelper</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-12 21:11:22</sys_updated_on>
+        <sys_updated_on>2022-07-13 20:11:19</sys_updated_on>
     </sys_script_include>
 </record_update>
