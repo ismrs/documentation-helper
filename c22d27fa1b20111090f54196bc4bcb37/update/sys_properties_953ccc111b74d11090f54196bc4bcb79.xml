@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>Class types to be included in the documentation.</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>documentation.classtypes</name>
+        <read_roles/>
+        <suffix/>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-07-18 20:48:14</sys_created_on>
+        <sys_id>953ccc111b74d11090f54196bc4bcb79</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>documentation.classtypes</sys_name>
+        <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
+        <sys_update_name>sys_properties_953ccc111b74d11090f54196bc4bcb79</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-07-18 20:48:14</sys_updated_on>
+        <type>string</type>
+        <value>sys_properties, sys_script_include, sys_script</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=953ccc111b74d11090f54196bc4bcb79"/>
+</record_update>

@@ -9,8 +9,8 @@
         <name>DocumentationGenerator</name>
         <script><![CDATA[var DocumentationGenerator = Class.create();
 DocumentationGenerator.prototype = {
-    initialize: function() {
-    },
+initialize: function() {
+},
 
 /*
 1. Decide what to process:
@@ -28,27 +28,39 @@ generateDocumentationforApp: function (appID) {
 var documentation = new DocumentationHelper();
 var appFiles = documentation.getAllApplicationFiles(appID);
 var kbContent = '';
+var appFile = '';
 for (var i = 0; i < appFiles.length; i++) {
+    
     var gr = new GlideRecord(appFiles[i].sys_class_name);
+    
     if (gr.get(appFiles[i].sys_id)){
-        kbContent = kbContent + documentation.getTemplate(gr);
-    }   
+        if (gs.getProperty('documentation.classtypes').indexOf(appFiles[i].sys_class_name)>= 0){
+            if (appFile == '' || appFile !== appFiles[i].sys_class_name){
+                appFile = appFiles[i].sys_class_name;
+                kbContent = kbContent + '<h2>'+ appFiles[i].sys_class_name$DISPLAY +'</h2>' + documentation.getTemplate(gr);
+            }
+            else{
+                kbContent = kbContent + documentation.getTemplate(gr);
+            }
+        }
+           
+}   
 }
 var kbArticle = documentation.createKbArticle(kbContent);
 },
-    type: 'DocumentationGenerator'
+type: 'DocumentationGenerator'
 };]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-12 07:48:46</sys_created_on>
         <sys_id>1680e2871bac111090f54196bc4bcb6a</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>8</sys_mod_count>
         <sys_name>DocumentationGenerator</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_1680e2871bac111090f54196bc4bcb6a</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-13 18:37:46</sys_updated_on>
+        <sys_updated_on>2022-07-18 20:52:13</sys_updated_on>
     </sys_script_include>
 </record_update>
