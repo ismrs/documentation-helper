@@ -50,6 +50,7 @@ this.logDebug('createKbArticle', 'created record::', JSON.stringify(article, nul
 getTemplate: function (glideRecord) {
 
 var payload = '';
+var instanceName = gs.getProperty('documentation.instancename') != '' ? gs.getProperty('documentation.instancename') : gs.getProperty('instance_name');
 switch(glideRecord.sys_class_name.toString()) {
 
 case 'sys_script_include':
@@ -59,6 +60,7 @@ case 'sys_script_include':
     '<p> Active: ' + glideRecord.active + '</p>'+
     '<p>'+'API name: ' + glideRecord.api_name + '</p>'+ 
     '<p>'+'Caller access: ' + glideRecord.caller_access + '</p>'+
+    '<p><a href="https://'+ instanceName+'.service-now.com/now/nav/ui/classic/params/target/'+glideRecord.sys_class_name.toString()+'.do%3Fsys_id%3D'+glideRecord.sys_id+'">Link: '+glideRecord.name +'</a></p>' +
     '<h4> Versions </h4>' +
     this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
     '</div>';
@@ -228,13 +230,13 @@ type: 'DocumentationHelper'
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-11 18:54:51</sys_created_on>
         <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
-        <sys_mod_count>116</sys_mod_count>
+        <sys_mod_count>123</sys_mod_count>
         <sys_name>DocumentationHelper</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-18 07:55:46</sys_updated_on>
+        <sys_updated_on>2022-07-18 09:45:37</sys_updated_on>
     </sys_script_include>
 </record_update>
