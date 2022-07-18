@@ -22,6 +22,7 @@ this.logDebug('getAllApplicationFiles', 'input::', applicationID);
 
 var applicationFiles = new global.GlideQuery('sys_metadata')
 .where('sys_scope', applicationID)
+.orderByDesc('sys_class_name')
 .select('sys_name', 'sys_class_name', 'sys_update_name')
 .toArray(100); // <-- TODO:: reavaluate this, could be more files.
 
@@ -52,13 +53,14 @@ var payload = '';
 switch(glideRecord.sys_class_name.toString()) {
 
 case 'sys_script_include':
-    payload = '<div><h2>'+ glideRecord.name + '</h2>' +
+    payload = '<div>' + //<h2>Script Includes</h2>
+    '<h3>'+ glideRecord.name + '</h3>' +
     '<p>'+ glideRecord.description + '</p>' + 
     '<p> Active: ' + glideRecord.active + '</p>'+
     '<p>'+'API name: ' + glideRecord.api_name + '</p>'+ 
     '<p>'+'Caller access: ' + glideRecord.caller_access + '</p>'+
-    '<h3> Versions </h3>' +
-    this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+    '<h4> Versions </h4>' +
+    this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
     '</div>';
     
     this.logDebug('getTemplate', 'Script Include Payload::', payload);
@@ -66,7 +68,8 @@ case 'sys_script_include':
     break;
 
 case 'sys_script':
-    payload = '<div><h2>'+ glideRecord.name + '</h2>' + 
+    payload = //'<div>' + //<h2> Business Rules </h2>
+    '<h3>'+ glideRecord.name + '</h3>' + 
     '<p>' + glideRecord.description + '</p>' +
     '<p> Active: ' + glideRecord.active + '</p>'+
     '<p> Abort action: ' + glideRecord.abort_action + '</p>' +
@@ -87,9 +90,10 @@ case 'sys_script':
     '<p>' + glideRecord.order + '</p>' +
     '<p>' + glideRecord.priority + '</p>' +
     '<p>' + glideRecord.role_conditions + '</p>' +
-    '<h3> Versions </h3>' +
-    this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
-    '</div>';
+    '<h4> Versions </h4>' +
+    //this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+    this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
+    //'</div>';
     
     this.logDebug('getTemplate', 'Business Rule Payload::', payload);
     
@@ -112,7 +116,17 @@ break;
 // // code block
 // break;
 default:
-// code block
+
+// payload = //'<div>' + //<h2> Business Rules </h2>
+// '<h3>'+ glideRecord.sys_name + '</h3>' + 
+// '<h4> Versions </h4>' +
+// //this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+// this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
+// //'</div>';
+
+// this.logDebug('getTemplate', 'Default Payload::', payload);
+
+
 }
 
 return payload;
@@ -126,42 +140,69 @@ var versions = new global.GlideQuery('sys_update_version')
 .where('name', sys_update_name)
 .orderByDesc('sys_created_on')
 .select('name', 'source$DISPLAY', 'sys_created_on')
-.toArray(5)
+.toArray(5);
 
 this.logDebug('getVersions', 'output::', JSON.stringify(versions, null, 2));
 return versions;
 },
 
 
-/**
- * buildHTMLTable
- * @param {Array} versionArray 
- * @returns String
- */
-buildHTMLTable: function (versionArray) {
-this.logDebug('buildHTMLTable', 'input::', JSON.stringify(versionArray, null, 2));
+// /**
+//  * buildHTMLTable
+//  * @param {Array} versionArray 
+//  * @returns String
+//  */
+// buildHTMLTable: function (versionArray) {
+// this.logDebug('buildHTMLTable', 'input::', JSON.stringify(versionArray, null, 2));
 
-var tablePayload = '<table>'+
-'<tr>'+
-'<th>Name</th>'+
-'<th>Source</th>'+
-'<th>Created</th>'+
-'</tr>';
+// var tablePayload = '<table>'+
+// '<tr>'+
+// '<th>Name</th>'+
+// '<th>Source</th>'+
+// '<th>Created</th>'+
+// '</tr>';
 
-for (var i = 0; i < versionArray.length; i++) {
-var tableRow = '<tr><td>' + versionArray[i].name +
-'  </td><td>'+ 
-versionArray[i].source$DISPLAY +
-'  </td><td>' + versionArray[i].sys_created_on +
-'</tr>';
-tablePayload = tablePayload + tableRow;
-}
-tablePayload = tablePayload + '</table>';
+// for (var i = 0; i < versionArray.length; i++) {
+// var tableRow = '<tr><td>' + versionArray[i].name +
+// '  </td><td>'+ 
+// versionArray[i].source$DISPLAY +
+// '  </td><td>' + versionArray[i].sys_created_on +
+// '</tr>';
+// tablePayload = tablePayload + tableRow;
+// }
+// tablePayload = tablePayload + '</table>';
 
-this.logDebug('buildHTMLTable', 'output::', tablePayload);
-return tablePayload;
+// this.logDebug('buildHTMLTable', 'output::', tablePayload);
+// return tablePayload;
+// },
+
+buildHTMLTable: function (headers, rows) {
+    //var functionHeaders = JSON.stringify(headers);
+    var tableHeaders = '<table><tr>';
+    var tablePayload = '';
+
+ for (var i = 0; i < headers.length; i++) {
+    //gs.info('for loop header: ' + JSON.stringify(headers[i]));
+        var headerRow = '<th>' + headers[i] +'</th>';
+        tableHeaders = tableHeaders + headerRow;
+    }
+    tableHeaders = tableHeaders + '</tr>';
+
+    for (var m = 0; m < rows.length; m++) {
+        var tableRow = '<tr><td>' + rows[m].name + 
+        '</td><td>'+ 
+        rows[m].source$DISPLAY +
+        '</td><td>' + rows[m].sys_created_on +
+        '</tr>';
+        tablePayload = tablePayload + tableRow;
+    gs.info(tableRow);
+        }
+        tablePayload = tableHeaders + tablePayload + '</table>';
+
+        this.logDebug('buildHTMLTable', 'output::', tablePayload);
+        return tablePayload;
+
 },
-
 
 
 // Function - Build payload
@@ -187,13 +228,13 @@ type: 'DocumentationHelper'
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-11 18:54:51</sys_created_on>
         <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
-        <sys_mod_count>96</sys_mod_count>
+        <sys_mod_count>116</sys_mod_count>
         <sys_name>DocumentationHelper</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-13 20:11:19</sys_updated_on>
+        <sys_updated_on>2022-07-18 07:55:46</sys_updated_on>
     </sys_script_include>
 </record_update>
