@@ -24,9 +24,9 @@ var applicationFiles = new global.GlideQuery('sys_metadata')
 .where('sys_scope', applicationID)
 .orderByDesc('sys_class_name')
 .select('sys_name', 'sys_class_name','sys_class_name$DISPLAY' , 'sys_update_name')
-.toArray(100); // <-- TODO:: reavaluate this, could be more files.
+.toArray(100); // <-- TODO:: re-avaluate this, could be more files.
 
-this.logDebug('getAllApplicationFiles', 'output::', applicationFiles);
+this.logDebug('getAllApplicationFiles', 'output::', JSON.stringify(applicationFiles, null, 2));
 return applicationFiles;
 },
 
@@ -37,7 +37,7 @@ return applicationFiles;
 createKbArticle: function (data){
 var article = new global.GlideQuery('kb_knowledge')
 .insert({
-short_description: 'Docuemntation', // <-- TODO: The name should reflect whats being documented.
+short_description: 'Documentation', // <-- TODO: The name should reflect whats being documented.
 kb_knowledge_base: gs.getProperty('documentation.knowledgebase'),
 text: data})
 .get();
@@ -68,7 +68,7 @@ case 'sys_script_include':
     '<p>'+'Caller access: ' + glideRecord.caller_access + '</p>'+
     '<p><a href="https://'+ instanceName+'.service-now.com/now/nav/ui/classic/params/target/'+glideRecord.sys_class_name.toString()+'.do%3Fsys_id%3D'+glideRecord.sys_id+'">Link: '+glideRecord.name +'</a></p>' +
     '<h4> Versions </h4>' +
-    this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
+    this.buildHTMLTableForVersions(['Name','Source','Created'],this.getVersions(glideRecord.name)) +
     '</div>';
     
     this.logDebug('getTemplate', 'Script Include Payload::', payload);
@@ -100,7 +100,7 @@ case 'sys_script':
     '<p>' + glideRecord.role_conditions + '</p>' +
     '<h4> Versions </h4>' +
     //this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
-    this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
+    this.buildHTMLTableForVersions(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
     //'</div>';
     
     this.logDebug('getTemplate', 'Business Rule Payload::', payload);
@@ -117,16 +117,35 @@ case 'sys_properties':
     '<p> Write roles' + glideRecord.write_roles + '</p>' +
     '<h4> Versions </h4>' +
     //this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
-    this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
+    this.buildHTMLTableForVersions(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
     //'</div>';
     
     this.logDebug('getTemplate', 'System Property Payload::', payload);
 
 break;
 
-// case b:
-// // code block
-// break;
+case 'sys_db_object':
+    payload = 
+    '<h3>'+ glideRecord.label + '[' + glideRecord.name + ']' + '</h3>' + 
+    '<p> Access: ' + glideRecord.access + '</p>' +
+    '<p> Caller Access: ' + glideRecord.caller_access + '</p>' +
+    '<p> Client Scripts Access: ' + glideRecord.client_scripts_access + '</p>' +
+    '<p> create_access: ' + glideRecord.create_access + '</p>' +
+    '<p> delete_access' + glideRecord.delete_access + '</p>' +
+    '<p> is_extendable' + glideRecord.is_extendable + '</p>' +
+    '<p> extension_model' + glideRecord.extension_model + '</p>' +
+    '<p> user_role:' + glideRecord.user_role + '</p>' +
+    '<h4> Fields </h4>' +
+    this.buildDictonaryHTMLTable(['Element','internal_type','reference','default_value'],this.getTableColumns(glideRecord.name)) +
+   
+    '<h4> Versions </h4>' +
+    //this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+    this.buildHTMLTableForVersions(['Name','Source','Created'],this.getVersions(glideRecord.name)) +
+    //'</div>';
+    
+    this.logDebug('getTemplate', 'Table Payload::', payload);
+    
+    break;
 // case c:
 // // code block
 // break;
@@ -138,15 +157,16 @@ break;
 // break;
 default:
 
-payload = //'<div>' + //<h2> Business Rules </h2>
-'<h3>'+ glideRecord.sys_name + '</h3>' + 
-'<h4> Versions </h4>' +
-//this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
-this.buildHTMLTable(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
-//'</div>';
+payload =
+'<h3>'+ glideRecord.sys_name + '(' + glideRecord.sys_class_name.toString() + ')' +'</h3>' +
+'<p><a href="https://'+ instanceName+'.service-now.com/now/nav/ui/classic/params/target/'+glideRecord.sys_class_name.toString()+'.do%3Fsys_id%3D'+glideRecord.sys_id+'">Link: '+glideRecord.name +'</a></p>';
+    
+// '<h4> Versions </h4>' +
+// //this.buildHTMLTable(this.getVersions(glideRecord.sys_update_name)) +
+// this.buildHTMLTableForVersions(['Name','Source','Created'],this.getVersions(glideRecord.sys_update_name)) +
+// //'</div>';
 
 this.logDebug('getTemplate', 'Default Payload::', payload);
-
 
 }
 
@@ -168,36 +188,7 @@ return versions;
 },
 
 
-// /**
-//  * buildHTMLTable
-//  * @param {Array} versionArray 
-//  * @returns String
-//  */
-// buildHTMLTable: function (versionArray) {
-// this.logDebug('buildHTMLTable', 'input::', JSON.stringify(versionArray, null, 2));
-
-// var tablePayload = '<table>'+
-// '<tr>'+
-// '<th>Name</th>'+
-// '<th>Source</th>'+
-// '<th>Created</th>'+
-// '</tr>';
-
-// for (var i = 0; i < versionArray.length; i++) {
-// var tableRow = '<tr><td>' + versionArray[i].name +
-// '  </td><td>'+ 
-// versionArray[i].source$DISPLAY +
-// '  </td><td>' + versionArray[i].sys_created_on +
-// '</tr>';
-// tablePayload = tablePayload + tableRow;
-// }
-// tablePayload = tablePayload + '</table>';
-
-// this.logDebug('buildHTMLTable', 'output::', tablePayload);
-// return tablePayload;
-// },
-
-buildHTMLTable: function (headers, rows) {
+buildHTMLTableForVersions: function (headers, rows) {
     //var functionHeaders = JSON.stringify(headers);
     var tableHeaders = '<table><tr>';
     var tablePayload = '';
@@ -220,13 +211,51 @@ buildHTMLTable: function (headers, rows) {
         }
         tablePayload = tableHeaders + tablePayload + '</table>';
 
-        this.logDebug('buildHTMLTable', 'output::', tablePayload);
+        this.logDebug('buildHTMLTableForVersions', 'output::', tablePayload);
         return tablePayload;
 
 },
 
+buildDictonaryHTMLTable: function (headers, rows) {
+    var tableHeaders = '<table><tr>';
+    var tablePayload = '';
 
-// Function - Build payload
+ for (var i = 0; i < headers.length; i++) {
+    //gs.info('for loop header: ' + JSON.stringify(headers[i]));
+        var headerRow = '<th>' + headers[i] +'</th>';
+        tableHeaders = tableHeaders + headerRow;
+    }
+    tableHeaders = tableHeaders + '</tr>';
+
+    //'Element','internal_type','reference','default_value'
+    for (var m = 0; m < rows.length; m++) {
+        var tableRow = '<tr><td>' + rows[m].element + 
+        '</td><td>'+ 
+        rows[m].internal_type +
+        '</td><td>' + rows[m].reference +
+        '</td><td>' + rows[m].default_value +
+        '</tr>';
+        tablePayload = tablePayload + tableRow;
+    gs.info(tableRow);
+        }
+        tablePayload = tableHeaders + tablePayload + '</table>';
+
+        this.logDebug('buildDictonaryHTMLTable', 'output::', tablePayload);
+        return tablePayload;
+},
+
+
+getTableColumns: function (tableName) {
+    var fields = new global.GlideQuery('sys_dictionary')
+.where('name', tableName)
+//.orderByDesc('sys_created_on')
+.select('element', 'internal_type', 'reference', 'default_value')
+.toArray(100);
+
+this.logDebug('getTableColumns', 'output::', JSON.stringify(fields, null, 2));
+return fields;
+
+},
 
 
 
@@ -249,13 +278,13 @@ type: 'DocumentationHelper'
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-07-11 18:54:51</sys_created_on>
         <sys_id>d56f6b7e1b60111090f54196bc4bcb0f</sys_id>
-        <sys_mod_count>126</sys_mod_count>
+        <sys_mod_count>141</sys_mod_count>
         <sys_name>DocumentationHelper</sys_name>
         <sys_package display_value="Documentation Helper" source="c22d27fa1b20111090f54196bc4bcb37">c22d27fa1b20111090f54196bc4bcb37</sys_package>
         <sys_policy/>
         <sys_scope display_value="Documentation Helper">c22d27fa1b20111090f54196bc4bcb37</sys_scope>
         <sys_update_name>sys_script_include_d56f6b7e1b60111090f54196bc4bcb0f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-18 20:55:33</sys_updated_on>
+        <sys_updated_on>2022-07-24 06:46:02</sys_updated_on>
     </sys_script_include>
 </record_update>
